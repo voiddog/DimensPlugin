@@ -1,0 +1,39 @@
+group 'org.voiddog.gradle'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile "com.android.tools.build:gradle:2.3.3"
+    compile 'org.codehaus.groovy:groovy-all:2.4.10'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile gradleApi()
+    compile localGroovy()
+}
+
+//push to local
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId group
+            artifactId 'DimensPlugin'
+            version this.version
+        }
+    }
+
+    repositories {
+        maven {
+            url "/Users/qigengxin/Documents/MavenRepo"
+        }
+    }
+}
