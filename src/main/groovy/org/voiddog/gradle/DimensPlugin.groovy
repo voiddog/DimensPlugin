@@ -71,7 +71,7 @@ class DimensPlugin implements Plugin<Project>{
                     // verify
                     def subResources = new XmlSlurper().parse(outFile)
                     subResources.children().each {GPathResult dimen ->
-                        if (dimen.'@name' == 'dimen'){
+                        if (dimen.name() == 'dimen'){
                             def findRes = Collections.binarySearch(dimensList, dimen, dimensGPathCompare)
                             findRes = findRes > 0 ? dimensList[findRes] : null
                             if (!findRes){
