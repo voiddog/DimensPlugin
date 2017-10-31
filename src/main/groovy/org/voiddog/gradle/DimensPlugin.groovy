@@ -73,10 +73,10 @@ class DimensPlugin implements Plugin<Project>{
                     subResources.children().each {GPathResult dimen ->
                         if (dimen.name() == 'dimen'){
                             def findRes = Collections.binarySearch(dimensList, dimen, dimensGPathCompare)
-                            findRes = findRes > 0 ? dimensList[findRes] : null
+                            findRes = findRes >= 0 ? dimensList[findRes] : null
                             if (!findRes){
                                 // not found
-                                throw new GradleException("<dimen name='${dimen.'@name'.text()}'> define in subDimens, but not found in dimens")
+                                throw new GradleException("<dimen name='${dimen.'@name'.text()}'> define in ${name+'/dimens.xml'}, but not found in ${dimensConfig.input + '/dimens.xml'}")
                             }
                         }
                     }
