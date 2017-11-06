@@ -7,6 +7,8 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+import java.text.DecimalFormat
+
 class DimensPlugin implements Plugin<Project>{
 
     Project project
@@ -97,17 +99,19 @@ class DimensPlugin implements Plugin<Project>{
                 xml.resources(){
                     dimensList.each {GPathResult dimen ->
                         def value = dimen.text()
-                        def m = value =~ /(\d+)dp/
+                        def m = value =~ /(\d+\.?\d*)dp/
                         if (m){
                             // match
                             def dpValue = m.group(1) as Float
-                            value = "${dpValue*scale}dp"
+                            DecimalFormat df = new DecimalFormat("#.#")
+                            value = "${df.format(dpValue*scale)}dp"
                         } else {
-                            m = value =~ /(\d+)sp/
+                            m = value =~ /(\d+\.?\d*)sp/
                             if (m){
                                 // match
                                 def dpValue = m.group(1) as Float
-                                value = "${dpValue*scale}sp"
+                                DecimalFormat df = new DecimalFormat("#.#")
+                                value = "${df.format(dpValue*scale)}sp"
                             }
                         }
                         owner.dimen(name:dimen.'@name', value)
