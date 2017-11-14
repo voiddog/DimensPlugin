@@ -15,12 +15,9 @@ class DimensPlugin implements Plugin<Project>{
 
     @Override
     void apply(Project project) {
-        def isApp = project.plugins.hasPlugin(AppPlugin)
-        if (isApp){
-            project.extensions.create('dimensConfig', DimensExtension)
-            this.project = project
-            insertTask()
-        }
+        project.extensions.create('dimensConfig', DimensExtension)
+        this.project = project
+        insertTask()
     }
 
     void insertTask(){
