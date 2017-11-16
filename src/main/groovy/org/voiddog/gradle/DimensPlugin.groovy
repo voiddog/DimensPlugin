@@ -1,6 +1,6 @@
 package org.voiddog.gradle
 
-import com.android.build.gradle.AppPlugin
+import com.android.ddmlib.Log
 import groovy.util.slurpersupport.GPathResult
 import groovy.xml.MarkupBuilder
 import org.gradle.api.GradleException
@@ -28,11 +28,19 @@ class DimensPlugin implements Plugin<Project>{
         // define task
         def dimensTask = project.task 'generateDimens' doLast {
             def dimensConfig = project.extensions.findByType(DimensExtension)
-            if (!dimensConfig){
+            if (!dimensConfig || !dimensConfig.input){
                 return this
             }
+            if (!dimensConfig.input.endsWith('.xml')){
+                throw new GradleException("${dimensConfig.input} not a xml file")
+            }
+            dimensConfig.output && dimensConfig.output.each {key,value->
+                if (!key || !key.endsWith('.xml')){
+                    throw new GradleException("${key} not a xml file")
+                }
+            }
 
-            def inputFile = project.file('src/main/res/' + dimensConfig.input + '/dimens.xml')
+            def inputFile = project.file('src/main/res/' + dimensConfig.input)
             if (!inputFile || !inputFile.exists()){
                 return this
             }
@@ -65,7 +73,7 @@ class DimensPlugin implements Plugin<Project>{
 
             // read other dimens
             dimensConfig.output.each {name, scale ->
-                def outFile = project.file('src/main/res/' + name + '/dimens.xml')
+                def outFile = project.file('src/main/res/' + name)
                 if (outFile.exists()){
                     // verify
                     def subResources = new XmlSlurper().parse(outFile)
@@ -75,7 +83,7 @@ class DimensPlugin implements Plugin<Project>{
                             findRes = findRes >= 0 ? dimensList[findRes] : null
                             if (!findRes){
                                 // not found
-                                throw new GradleException("<dimen name='${dimen.'@name'.text()}'> define in ${name+'/dimens.xml'}, but not found in ${dimensConfig.input + '/dimens.xml'}")
+                                throw new GradleException("<dimen name='${dimen.'@name'.text()}'> define in ${name}, but not found in ${dimensConfig.input}")
                             }
                         }
                     }
@@ -117,6 +125,10 @@ class DimensPlugin implements Plugin<Project>{
             }
         }
 
-        project.preBuild.dependsOn dimensTask
+        if (project.hasProperty('preBuild')){
+            project.preBuild.dependsOn dimensTask
+        } else {
+            Log.e('Dimens', "task preBuild not found in: ${project.name}")
+        }
     }
 }
