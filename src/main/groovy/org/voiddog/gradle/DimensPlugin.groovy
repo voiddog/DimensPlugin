@@ -125,10 +125,13 @@ class DimensPlugin implements Plugin<Project>{
             }
         }
 
-        if (project.hasProperty('preBuild')){
-            project.preBuild.dependsOn dimensTask
-        } else {
-            Log.e('Dimens', "task preBuild not found in: ${project.name}")
+
+        project.afterEvaluate {
+            if (project.hasProperty('preBuild')){
+                project.preBuild.dependsOn dimensTask
+            } else {
+                Log.e('Dimens', "task preBuild not found in: ${project.name}")
+            }
         }
     }
 }
