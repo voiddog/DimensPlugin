@@ -108,6 +108,9 @@ class DimensPlugin implements Plugin<Project>{
                         if (m){
                             // match
                             def dpValue = m.group(1) as Float
+                            if (value.startsWith('-')){
+                                dpValue *= -1
+                            }
                             DecimalFormat df = new DecimalFormat("#.#")
                             value = "${df.format(dpValue*scale)}dp"
                         } else {
